@@ -1,0 +1,11 @@
+services:
+  web:
+
+
+  bdd:
+
+
+  pma:
+
+volumes:
+  db_data:
