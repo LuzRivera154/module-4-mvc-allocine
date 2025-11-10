@@ -1,0 +1,128 @@
+<?php
+/**
+ * 1. Complétez les requêtes SQL (...TODO...) selon votre table.
+ * 2. Les méthodes add et edit doivent être adaptées pour gérer les colonnes spécifiques à votre modèle.
+ */
+
+class [MODEL_NAME] Model {
+    private PDO $bdd;
+    private PDOStatement $add[MODEL_NAME];
+    private PDOStatement $del[MODEL_NAME];
+    private PDOStatement $get[MODEL_NAME];
+    private PDOStatement $get[MODEL_NAME]s;
+    private PDOStatement $edit[MODEL_NAME];
+
+    function __construct()
+    {
+        $this->bdd = new PDO("mysql:host=lamp-mysql;dbname=boutique", "root", "root");
+
+        // Adaptez cette requête à votre table [MODEL_NAME]
+        $this->add[MODEL_NAME] = $this->bdd->prepare("INSERT INTO ...TODO... ");
+
+        $this->del[MODEL_NAME] = $this->bdd->prepare("DELETE FROM `[MODEL_NAME]` WHERE `id` = :id;");
+
+        $this->get[MODEL_NAME] = $this->bdd->prepare("SELECT * FROM `[MODEL_NAME]` WHERE `id` = :id;");
+
+        // Adaptez cette requête à votre table [MODEL_NAME]
+        $this->edit[MODEL_NAME] = $this->bdd->prepare("UPDATE `[MODEL_NAME]` SET ...TODO... WHERE `id` = :id");
+
+        $this->get[MODEL_NAME]s = $this->bdd->prepare("SELECT * FROM `[MODEL_NAME]` LIMIT :limit");
+    }
+    // Éditez les paramètres de la méthode add en fonction de votre table [MODEL_NAME]
+    public function add(...) : void
+    {
+        // $this->add[MODEL_NAME]->bindValue("...", $columnValue);
+        $this->add[MODEL_NAME]->execute();
+    }
+
+    public function del(int $id) : void
+    {
+        $this->del[MODEL_NAME]->bindValue("id", $id);
+        $this->del[MODEL_NAME]->execute();
+    }
+    public function get($id): [MODEL_NAME]Entity | NULL
+    {
+        $this->get[MODEL_NAME]->bindValue("id", $id, PDO::PARAM_INT);
+        $this->get[MODEL_NAME]->execute();
+        $raw[MODEL_NAME] = $this->get[MODEL_NAME]->fetch();
+
+        // Si le produit n'existe pas, je renvoie NULL
+        if(!$raw[MODEL_NAME]){
+            return NULL;
+        }
+        return new [MODEL_NAME]Entity(
+            // $raw[MODEL_NAME]["columnName"],
+        );
+    }
+
+    public function getAll(int $limit = 50) : array
+    {
+        $this->get[MODEL_NAME]s->bindValue("limit", $limit, PDO::PARAM_INT);
+        $this->get[MODEL_NAME]s->execute();
+        $raw[MODEL_NAME]s = $this->get[MODEL_NAME]s->fetchAll();
+
+        $[MODEL_NAME]sEntity = [];
+        foreach($raw[MODEL_NAME]s as $raw[MODEL_NAME]){
+            $[MODEL_NAME]sEntity[] = new [MODEL_NAME]Entity(
+                $raw[MODEL_NAME]["name"],
+                $raw[MODEL_NAME]["price"],
+                $raw[MODEL_NAME]["image"],
+                $raw[MODEL_NAME]["id"]
+            );
+        }
+
+        return $[MODEL_NAME]sEntity;
+    }
+
+    // À part l'id, les paramètres de la méthode edit sont optionnels.
+    // Nous ne voulons pas forcer le développeur à modifier tous les champs
+    public function edit(int $id, ...) : [MODEL_NAME]Entity | NULL
+    {
+        $original[MODEL_NAME]Entity = $this->get($id);
+
+        // Si le produit n'existe pas, je renvoie NULL
+        if(!$original[MODEL_NAME]Entity){
+            return NULL;
+        }
+
+        // On utilise un opérateur ternaire ? : ;
+        // Il permet en une ligne de renvoyer le nom original du 
+        // produit si le paramètre est NULL.
+        // En effet, si le paramètre est NULL, cela veut dire que 
+        // l'utilisateur ne souhaite pas le modifier.
+        // Le même résultat est possible avec des if else
+        // Je précise PDO::PARAM_INT car id est un INT
+        $this->edit[MODEL_NAME]->bindValue("id", $id, PDO::PARAM_INT);
+
+        // $this->edit[MODEL_NAME]->bindValue($columnName,
+        //  $columnName ? $columnName : $original[MODEL_NAME]Entity->getColumnName() );
+
+        $this->edit[MODEL_NAME]->execute();
+
+        // Une fois modifié, je renvoie le [MODEL_NAME] en utilisant ma
+        // propre méthode public [MODEL_NAME]Model::get().
+        return $this->get($id);
+    }
+}
+
+class [MODEL_NAME]Entity{
+    private $id;
+    // private $columnName;
+    function __construct($columnName, ..., int $id = NULL)
+    {
+        // $this->setColumnName($columnName);
+        $this->id = $id;
+    }
+
+    // public function setColumnName($columnValue){
+    //     $this->columnName = $columnValue;
+    // }
+
+    // public function getColumnName(){
+    //     return $this->columnName;
+    // }
+    
+    public function getId() : int{
+        return $this->id;
+    }
+}
